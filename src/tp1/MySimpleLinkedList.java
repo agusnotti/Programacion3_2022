@@ -1,24 +1,55 @@
 package tp1;
 
-public class MySimpleLinkedList<T> {
+//import java.util.Iterator;
+
+public class MySimpleLinkedList<T> implements Iterable<T>{
 
 	private Node<T> first;
+	private Node<T> last;
 	private int size;
 	
 	public MySimpleLinkedList() {
 		this.first = null;
+		this.last = null;
 		this.size = 0;
 	}
 	
-	public void insertFront(T info) {
-		Node<T> tmp = new Node<T>(info,null);
-		tmp.setNext(this.first);
-		this.first = tmp;
-		this.size ++;
+	public Node<T> getFirst(){
+		return this.first;
 	}
 	
+	public Node<T> getLast(){
+		return this.last;
+	}
+	
+	//O(1) complejidad constante, no depende del tamaño de la lista
+	public void insertFront(T info) {
+		Node<T> tmp = new Node<T>(info,null,null);
+		tmp.setNext(this.first);
+		if(this.isEmpty()) {
+			this.last = tmp;
+		} else {
+			this.first.setPrevious(tmp);
+		}
+		this.first = tmp;
+		this.size ++;
+	}	
+	
+	public void insertLast(T info) {
+		Node<T> tmp = new Node<T>(info, null, this.last);
+		if(this.isEmpty()) {
+			this.first = tmp;
+		} else {
+			this.last.setNext(tmp);
+		}
+		this.last = tmp;
+		this.size++;
+	}
+	
+	
+	//O(1) complejidad constante, no depende del tamaño de la lista
 	public T extractFront() {	
-		T info = null; /// PREGUNTAR
+		T info = null;
 		if(this.first != null) {
 			info = this.first.getInfo();
 			this.first = this.first.getNext();
@@ -26,24 +57,26 @@ public class MySimpleLinkedList<T> {
 		}
 		return info;
 	}
+	
+	public T extractLast() {	
+		T info = null;
+		if(!this.isEmpty()) {
+			info = this.last.getInfo();
+			this.last = this.last.getPrevious();
+			this.last.setNext(null);
+			this.size --;
+		}
+		return info;
+	}
 
+	//O(1) complejidad constante, no depende del tamaño de la lista, es una sola consulta
 	public boolean isEmpty() {
-		return this.first == null;
+		return this.size == 0;
+		//return this.first == null;
 	}
 	
 	//DEBERIA RECORRERSE CON UN WHILE?
-	/*public T get(int index) {
-		Node<T> tmp = null;
-		
-		if(this.first != null && index <= this.size) {
-			tmp = this.first;
-			for (int i = 0; i < index; i++) {
-				tmp = tmp.getNext();  // en la ultima iteracion tmp es null porque no hay siguiente
-			}
-		}
-		return tmp.getInfo();
-	}*/
-	
+	//O(n) en el peor de los casos se recorren n elementos, siendo n el tamanio de la lista
 	public T get(int index) {
 		Node<T> tmp = null;
 		int contador = 0;
@@ -61,13 +94,9 @@ public class MySimpleLinkedList<T> {
 			}
 		}
 		return info;
-	}
+	}	
 	
-	
-
-	
-	
-	
+	//O(1) complejidad constante, no depende del tamaño de la lista, es una sola consulta
 	public int size() {
 		return this.size;
 	}
@@ -90,8 +119,8 @@ public class MySimpleLinkedList<T> {
 	/**
 	 EJERCICIO 4: Agregar un metodo indexOf, que reciba un elemento y retorne el indice donde esta almacenado ese elemento
 	 o -1 si no lo encuentra
-	**/
-	
+	**/	
+	//O(n) en el peor de los casos recorre toda la lista buscando el elemento
 	public int indexOf(T info) {
 		Node<T> tmp = null;
 		int index = -1;
@@ -109,6 +138,26 @@ public class MySimpleLinkedList<T> {
 			}
 		}		
 		return index;
+	}
+	
+	
+	//O(n) donde n el tamanio de la lista
+    public MySimpleLinkedList<T> reverseList() {
+    	MyIterator<T> it = this.iterator();
+    	MySimpleLinkedList<T> aux = new MySimpleLinkedList<T>();
+    	
+    	//O(n) * O(1) -> O(n) donde n es el tamanio de la lista
+    	while (it.hasNext()) {
+    		aux.insertFront(it.next()); //O(1)
+    	}
+    	
+    	return aux;
+    }	
+
+	//retorna un iterador
+	@Override
+	public MyIterator<T> iterator() {
+		return new MyIterator<T>(this.first); ///la lista le indica al iterador desde donde comenzar
 	}
 	
 }
