@@ -2,6 +2,8 @@ package tp1;
 
 //import java.util.Iterator;
 
+//a partir del esqueleto de la lista vinculada simple, hice la doblemente vinculada
+
 public class MySimpleLinkedList<T> implements Iterable<T>{
 
 	private Node<T> first;
